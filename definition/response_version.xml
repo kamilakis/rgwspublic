@@ -1,0 +1,8 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+	<env:Header/>
+	<env:Body>
+		<m:rgWsPublicVersionInfoResponse xmlns:m="http://gr/gsis/rgwspublic/RgWsPublic.wsdl">
+			<result>Version: 3.1.0, 11/04/2014, Copyright Γ.Γ.Δ.Ε. / Γ.Γ.Π.Σ. 2014.Υπηρεσία &quot;Βασικά στοιχεία μητρώου για νομικά πρόσωπα, νομικές οντότητες, και φυσικά πρόσωπα με εισόδημα από επιχειρηματική δραστηριότητα» με όριο κλήσεων και ταυτοποίηση χρήστη.</result>
+		</m:rgWsPublicVersionInfoResponse>
+	</env:Body>
+</env:Envelope>

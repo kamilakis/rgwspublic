@@ -1,0 +1,132 @@
+<WL5G3N0:definitions name="RgWsPublic" targetNamespace="http://gr/gsis/rgwspublic/RgWsPublic.wsdl" xmlns="" xmlns:WL5G3N0="http://schemas.xmlsoap.org/wsdl/" xmlns:WL5G3N1="http://gr/gsis/rgwspublic/RgWsPublic.wsdl" xmlns:WL5G3N2="http://www.w3.org/2001/XMLSchema" xmlns:WL5G3N3="http://schemas.xmlsoap.org/wsdl/soap/">
+	<WL5G3N0:types>
+		<xsd:schema elementFormDefault="qualified" targetNamespace="http://gr/gsis/rgwspublic/RgWsPublic.wsdl" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://gr/gsis/rgwspublic/RgWsPublic.wsdl" xmlns:tns0="http://gr/gsis/rgwspublic/RgWsPublic.wsdl/types/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<xsd:complexType name="RgWsPublicInputRtUser">
+				<xsd:complexContent>
+					<xsd:extension base="tns:RgWsPublicInputRtBase">
+						<xsd:sequence>
+							<xsd:element name="afmCalledBy" nillable="true" type="string"/>
+							<xsd:element name="afmCalledFor" nillable="true" type="string"/>
+						</xsd:sequence>
+					</xsd:extension>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="RgWsPublicInputRtBase">
+				<xsd:sequence/>
+			</xsd:complexType>
+			<xsd:complexType name="RgWsPublicBasicRtUser">
+				<xsd:complexContent>
+					<xsd:extension base="tns:RgWsPublicBasicRtBase">
+						<xsd:sequence>
+							<xsd:element name="afm" nillable="true" type="string"/>
+							<xsd:element name="stopDate" nillable="true" type="dateTime"/>
+							<xsd:element name="postalAddressNo" nillable="true" type="string"/>
+							<xsd:element name="doyDescr" nillable="true" type="string"/>
+							<xsd:element name="doy" nillable="true" type="string"/>
+							<xsd:element name="onomasia" nillable="true" type="string"/>
+							<xsd:element name="legalStatusDescr" nillable="true" type="string"/>
+							<xsd:element name="registDate" nillable="true" type="dateTime"/>
+							<xsd:element name="deactivationFlag" nillable="true" type="string"/>
+							<xsd:element name="deactivationFlagDescr" nillable="true" type="string"/>
+							<xsd:element name="postalAddress" nillable="true" type="string"/>
+							<xsd:element name="firmFlagDescr" nillable="true" type="string"/>
+							<xsd:element name="commerTitle" nillable="true" type="string"/>
+							<xsd:element name="postalAreaDescription" nillable="true" type="string"/>
+							<xsd:element name="INiFlagDescr" nillable="true" type="string"/>
+							<xsd:element name="postalZipCode" nillable="true" type="string"/>
+						</xsd:sequence>
+					</xsd:extension>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="RgWsPublicBasicRtBase">
+				<xsd:sequence/>
+			</xsd:complexType>
+			<xsd:complexType name="RgWsPublicFirmActRtUserArray">
+				<xsd:sequence>
+					<xsd:element maxOccurs="unbounded" minOccurs="0" name="RgWsPublicFirmActRtUser" nillable="true" type="tns:RgWsPublicFirmActRtUser"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="RgWsPublicFirmActRtUser">
+				<xsd:complexContent>
+					<xsd:extension base="tns:RgWsPublicFirmActRtBase">
+						<xsd:sequence>
+							<xsd:element name="firmActDescr" nillable="true" type="string"/>
+							<xsd:element name="firmActKind" nillable="true" type="string"/>
+							<xsd:element name="firmActKindDescr" nillable="true" type="string"/>
+							<xsd:element name="firmActCode" nillable="true" type="decimal"/>
+						</xsd:sequence>
+					</xsd:extension>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="RgWsPublicFirmActRtBase">
+				<xsd:sequence/>
+			</xsd:complexType>
+			<xsd:complexType name="GenWsErrorRtUser">
+				<xsd:complexContent>
+					<xsd:extension base="tns:GenWsErrorRtBase">
+						<xsd:sequence>
+							<xsd:element name="errorDescr" nillable="true" type="string"/>
+							<xsd:element name="errorCode" nillable="true" type="string"/>
+						</xsd:sequence>
+					</xsd:extension>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="GenWsErrorRtBase">
+				<xsd:sequence/>
+			</xsd:complexType>
+		</xsd:schema>
+	</WL5G3N0:types>
+	<WL5G3N0:message name="RgWsPublic_rgWsPublicAfmMethod">
+		<WL5G3N0:part name="RgWsPublicInputRt_in" type="WL5G3N1:RgWsPublicInputRtUser"/>
+		<WL5G3N0:part name="RgWsPublicBasicRt_out" type="WL5G3N1:RgWsPublicBasicRtUser"/>
+		<WL5G3N0:part name="arrayOfRgWsPublicFirmActRt_out" type="WL5G3N1:RgWsPublicFirmActRtUserArray"/>
+		<WL5G3N0:part name="pCallSeqId_out" type="WL5G3N2:decimal"/>
+		<WL5G3N0:part name="pErrorRec_out" type="WL5G3N1:GenWsErrorRtUser"/>
+	</WL5G3N0:message>
+	<WL5G3N0:message name="RgWsPublic_rgWsPublicAfmMethodResponse">
+		<WL5G3N0:part name="RgWsPublicBasicRt_out" type="WL5G3N1:RgWsPublicBasicRtUser"/>
+		<WL5G3N0:part name="arrayOfRgWsPublicFirmActRt_out" type="WL5G3N1:RgWsPublicFirmActRtUserArray"/>
+		<WL5G3N0:part name="pCallSeqId_out" type="WL5G3N2:decimal"/>
+		<WL5G3N0:part name="pErrorRec_out" type="WL5G3N1:GenWsErrorRtUser"/>
+	</WL5G3N0:message>
+	<WL5G3N0:message name="RgWsPublic_rgWsPublicVersionInfo"/>
+	<WL5G3N0:message name="RgWsPublic_rgWsPublicVersionInfoResponse">
+		<WL5G3N0:part name="result" type="WL5G3N2:string"/>
+	</WL5G3N0:message>
+	<WL5G3N0:portType name="RgWsPublic">
+		<WL5G3N0:operation name="rgWsPublicAfmMethod" parameterOrder="RgWsPublicInputRt_in RgWsPublicBasicRt_out arrayOfRgWsPublicFirmActRt_out pCallSeqId_out pErrorRec_out">
+			<WL5G3N0:input message="WL5G3N1:RgWsPublic_rgWsPublicAfmMethod"/>
+			<WL5G3N0:output message="WL5G3N1:RgWsPublic_rgWsPublicAfmMethodResponse"/>
+		</WL5G3N0:operation>
+		<WL5G3N0:operation name="rgWsPublicVersionInfo">
+			<WL5G3N0:input message="WL5G3N1:RgWsPublic_rgWsPublicVersionInfo"/>
+			<WL5G3N0:output message="WL5G3N1:RgWsPublic_rgWsPublicVersionInfoResponse"/>
+		</WL5G3N0:operation>
+	</WL5G3N0:portType>
+	<WL5G3N0:binding name="RgWsPublic" type="WL5G3N1:RgWsPublic">
+		<WL5G3N3:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<WL5G3N0:operation name="rgWsPublicAfmMethod">
+			<WL5G3N3:operation soapAction="http://gr/gsis/rgwspublic/RgWsPublic.wsdl/rgWsPublicAfmMethod"/>
+			<WL5G3N0:input>
+				<WL5G3N3:body namespace="http://gr/gsis/rgwspublic/RgWsPublic.wsdl" parts="RgWsPublicInputRt_in RgWsPublicBasicRt_out arrayOfRgWsPublicFirmActRt_out pCallSeqId_out pErrorRec_out" use="literal"/>
+			</WL5G3N0:input>
+			<WL5G3N0:output>
+				<WL5G3N3:body namespace="http://gr/gsis/rgwspublic/RgWsPublic.wsdl" parts="RgWsPublicBasicRt_out arrayOfRgWsPublicFirmActRt_out pCallSeqId_out pErrorRec_out" use="literal"/>
+			</WL5G3N0:output>
+		</WL5G3N0:operation>
+		<WL5G3N0:operation name="rgWsPublicVersionInfo">
+			<WL5G3N3:operation soapAction="http://gr/gsis/rgwspublic/RgWsPublic.wsdl/rgWsPublicVersionInfo"/>
+			<WL5G3N0:input>
+				<WL5G3N3:body namespace="http://gr/gsis/rgwspublic/RgWsPublic.wsdl" use="literal"/>
+			</WL5G3N0:input>
+			<WL5G3N0:output>
+				<WL5G3N3:body namespace="http://gr/gsis/rgwspublic/RgWsPublic.wsdl" parts="result" use="literal"/>
+			</WL5G3N0:output>
+		</WL5G3N0:operation>
+	</WL5G3N0:binding>
+	<WL5G3N0:service name="RgWsPublic">
+		<WL5G3N0:port binding="WL5G3N1:RgWsPublic" name="RgWsPublicPort">
+			<WL5G3N3:address location="https://www1.gsis.gr:443/webtax2/wsgsis/RgWsPublic/RgWsPublicPort"/>
+		</WL5G3N0:port>
+	</WL5G3N0:service>
+</WL5G3N0:definitions>
