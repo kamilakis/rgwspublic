@@ -2,40 +2,52 @@
 client library for greek GSIS tax service in [Go](https://golang.org/)
 
 ## Sample Usage
-```go
 
+Create a new main.go file and copy paste the following:
+```go
 package main
 
 import (
 	"fmt"
+
 	"github.com/kamhlos/rgwspublic"
 )
 
 func main() {
+
 	// get service version
-	v, err := Version()
+	v, err := rgwspublic.Version()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
 	fmt.Println(v)
+
 	// get VAT info using number of InfoQuest
 	// replace username and password with the ones you got from
 	// http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
-	i, err := AFMInfo("", "998184801", username, password)
+	i, err := rgwspublic.AFMInfo("", "998184801", username, password)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
 	// print data
 	i.String()
 }
 
 ```
+Note that username and password are given from the service
+`go get -v`
+`go run main.go`
 
+Two methods are exposed, AFMInfo() and Version():
 AFMInfo() accepts two vat numbers, and service credentials (username, password).
 
-First VAT number is the callee, second is the one we want information for
+First VAT number is the callee, second is the one we want information for. The callee can be empty.
+
+
 
 
 ## Πληροφορίες για την Υπηρεσία
