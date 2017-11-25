@@ -38,12 +38,14 @@ func main() {
 }
 
 ```
-Note that username and password are given from the service
+Note that username and password is supplied from the service.
+
 `go get -v`
+
 `go run main.go`
 
-Two methods are exposed, AFMInfo() and Version():
-AFMInfo() accepts two vat numbers, and service credentials (username, password).
+Two methods are exposed, `AFMInfo(string, string, string, string)` and `Version()`:
+AFMInfo() accepts two vat numbers (strings), and service credentials (username, password).
 
 First VAT number is the callee, second is the one we want information for. The callee can be empty.
 
