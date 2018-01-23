@@ -1,9 +1,11 @@
 # rgwspublic
 client library for greek GSIS tax service in [Go](https://golang.org/)
 
-## Sample Usage
+[![Build status](https://travis-ci.org/kamhlos/rgwspublic.svg?branch=master)](https://travis-ci.org/kamhlos/rgwspublic)
+[![GoDoc](https://godoc.org/github.com/kamhlos/rgwspublic?status.svg)](https://godoc.org/github.com/kamhlos/rgwspublic)
 
-Create a new main.go file and copy paste the following:
+## Example
+
 ```go
 package main
 
