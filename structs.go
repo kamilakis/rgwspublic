@@ -1,6 +1,7 @@
 package rgwspublic
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 )
@@ -106,6 +107,17 @@ const (
 	RG_WS_PUBLIC_TOKEN_USERNAME_TOO_LONG           = "Διαπιστώθηκε υπέρβαση του μήκους του ονόματος του χρήστη (username) της υπηρεσίας"
 	RG_WS_PUBLIC_WRONG_AFM                         = "O Α.Φ.Μ. για τον οποίο ζητούνται πληροφορίες δεν είναι έγκυρος."
 )
+
+func (a *AFMData) JSON() (string, error) {
+
+	var j []byte
+	j, err := json.MarshalIndent(&a, "", "\t")
+	if err != nil {
+		return "", err
+	}
+
+	return string(j), nil
+}
 
 func (a *AFMData) String() string {
 
