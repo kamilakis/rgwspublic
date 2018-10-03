@@ -35,12 +35,11 @@ func main() {
 		return
 	}
 
-	// print data
-	i.String()
+	fmt.Println(i)
 }
 
 ```
-Note that username and password is supplied from the service.
+Note that username and password is supplied from the [service](http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html).
 
 `go get -v`
 
