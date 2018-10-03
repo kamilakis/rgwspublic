@@ -83,6 +83,11 @@ func AFMInfo(calledby, calledfor, user, pass string) (*AFMData, error) {
 		}
 	}
 
+	// same for username/password
+	if len(user) < 6 || len(pass) < 6 {
+		return info, fmt.Errorf("username or password cannot be less than 6 chars")
+	}
+
 	env := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
 		<env:Envelope
 		xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
@@ -153,13 +158,11 @@ func AFMInfo(calledby, calledfor, user, pass string) (*AFMData, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		// decode error
-		s := parseXMLError(resp)
-
-		return info, fmt.Errorf("error code: %s, description: %s", s.ErrorCode, s.ErrorDescr)
+		return info, fmt.Errorf("HTTP Status: %d, error: %s", resp.StatusCode, resp.Status)
 	}
 
 	// parse response
+	// if errors are present it's the caller's responsibility to print
 	info, err = parseAFMInfo(resp)
 	if err != nil {
 		return info, err
@@ -208,6 +211,7 @@ func parseAFMInfo(r *http.Response) (*AFMData, error) {
 	// can't decide whether to change those horrific names or not
 	data := xmlr.Body.RGWSPublicAfmMethodResponse.RgWsPublicBasicRtOut
 	data.Activities = xmlr.Body.RGWSPublicAfmMethodResponse.ArrayOfRgWsPublicFirmActRtOut.RgWsPublicFirmActRtUser
+	data.Error = xmlr.Body.RGWSPublicAfmMethodResponse.PErrorRecOut
 
 	return &data, nil
 }

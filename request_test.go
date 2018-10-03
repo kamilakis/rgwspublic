@@ -19,6 +19,51 @@ func TestVersion(t *testing.T) {
 	fmt.Printf("got version: %s\n", version)
 }
 
+func TestInvalids(t *testing.T) {
+
+	// some invalid input to test returned service errors
+	inputs := []map[string]string{
+		{
+			"vat":      "1234567890",
+			"username": "someuser",
+			"password": "somepass",
+			"error":    "RG_WS_PUBLIC_TOKEN_USERNAME_NOT_AUTHENTICATED",
+		},
+		{
+			"vat":      "104807035",
+			"username": "someuser",
+			"password": "somepass",
+			"error":    "RG_WS_PUBLIC_TOKEN_USERNAME_NOT_AUTHENTICATED",
+		},
+		{
+			"vat":      "1234567890",
+			"username": "KAMILAKIS1", // valid user but,
+			"password": "hyhyhhyh!",  // wrong pass
+			"error":    "RG_WS_PUBLIC_TOKEN_USERNAME_NOT_AUTHENTICATED",
+		},
+		{
+			"vat":      "1234567890",
+			"username": "KAMILAKIS1", // put valid credentials here
+			"password": "hyhyhhyh!",  // for this test to pass
+			"error":    "RG_WS_PUBLIC_WRONG_AFM",
+		},
+	}
+
+	for k, v := range inputs {
+		t.Logf("testing input #%d, vat:%s, user:%s, pass:%s", k, v["vat"], v["username"], v["password"])
+		i, err := AFMInfo("", v["vat"], v["username"], v["password"])
+		if err != nil {
+			t.Errorf("error getting AFM info: %s", err.Error())
+			continue
+		}
+
+		if i.Error.ErrorCode != v["error"] {
+			t.Errorf("error code returned not expected, got: %s, wanted: %s", i.Error.ErrorCode, v["error"])
+		}
+	}
+
+}
+
 func TestPublicInfo(t *testing.T) {
 
 	// VAT number of InfoQuest
@@ -29,7 +74,7 @@ func TestPublicInfo(t *testing.T) {
 		t.Errorf("error getting AFM info: %s", err.Error())
 	}
 
-	i.String()
+	fmt.Println(i.String())
 }
 
 func TestParseAFMInfo(t *testing.T) {
@@ -90,7 +135,7 @@ func TestParseAFMInfo(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	i.String()
+	fmt.Println(i.String())
 }
 
 func TestParseVersion(t *testing.T) {

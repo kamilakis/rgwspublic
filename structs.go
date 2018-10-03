@@ -53,6 +53,7 @@ type AFMData struct {
 	RegistDate            string   `xml:"registDate"`            // ΗΜ/ΝΙΑ ΕΝΑΡΞΗΣ
 	StopDate              string   `xml:"stopDate"`              // ΗΜ/ΝΙΑ ΔΙΑΚΟΠΗΣ
 	Activities            []FirmActivities
+	Error                 XMLPErrorRecOut
 }
 
 // ArrRgWsPublicFirmActRtUser holds an array of the entity's actitivies (ΚΑΔ)
@@ -106,32 +107,40 @@ const (
 	RG_WS_PUBLIC_WRONG_AFM                         = "O Α.Φ.Μ. για τον οποίο ζητούνται πληροφορίες δεν είναι έγκυρος."
 )
 
-func (a *AFMData) String() {
-	fmt.Printf("XMLName:%s\n", a.XMLName)
-	fmt.Printf("AFM:%s\n", a.AFM)
-	fmt.Printf("DOY:%s\n", a.DOY)
-	fmt.Printf("DOYDesc:%s\n", a.DOYDesc)
-	fmt.Printf("INiFlagDescr:%s\n", a.INiFlagDescr)
-	fmt.Printf("DeactivationFlag:%s\n", a.DeactivationFlag)
-	fmt.Printf("DeactivationFlagDescr:%s\n", a.DeactivationFlagDescr)
-	fmt.Printf("FirmFlagDescr:%s\n", a.FirmFlagDescr)
-	fmt.Printf("Onomasia:%s\n", a.Onomasia)
-	fmt.Printf("CommerTitle:%s\n", a.CommerTitle)
-	fmt.Printf("LegalStatusDescr:%s\n", a.LegalStatusDescr)
-	fmt.Printf("PostalAddress:%s\n", a.PostalAddress)
-	fmt.Printf("PostalAddressNo:%s\n", a.PostalAddressNo)
-	fmt.Printf("PostalZipCode:%s\n", a.PostalZipCode)
-	fmt.Printf("PostalAreaDescription:%s\n", a.PostalAreaDescription)
-	fmt.Printf("RegistDate:%s\n", a.RegistDate)
-	fmt.Printf("StopDate:%s\n", a.StopDate)
+func (a *AFMData) String() string {
 
-	fmt.Println("ACTIVITIES:--------------------")
+	var s string
+
+	s = fmt.Sprintf("XMLName:%s\n", a.XMLName)
+	s += fmt.Sprintf("AFM:%s\n", a.AFM)
+	s += fmt.Sprintf("DOY:%s\n", a.DOY)
+	s += fmt.Sprintf("DOYDesc:%s\n", a.DOYDesc)
+	s += fmt.Sprintf("INiFlagDescr:%s\n", a.INiFlagDescr)
+	s += fmt.Sprintf("DeactivationFlag:%s\n", a.DeactivationFlag)
+	s += fmt.Sprintf("DeactivationFlagDescr:%s\n", a.DeactivationFlagDescr)
+	s += fmt.Sprintf("FirmFlagDescr:%s\n", a.FirmFlagDescr)
+	s += fmt.Sprintf("Onomasia:%s\n", a.Onomasia)
+	s += fmt.Sprintf("CommerTitle:%s\n", a.CommerTitle)
+	s += fmt.Sprintf("LegalStatusDescr:%s\n", a.LegalStatusDescr)
+	s += fmt.Sprintf("PostalAddress:%s\n", a.PostalAddress)
+	s += fmt.Sprintf("PostalAddressNo:%s\n", a.PostalAddressNo)
+	s += fmt.Sprintf("PostalZipCode:%s\n", a.PostalZipCode)
+	s += fmt.Sprintf("PostalAreaDescription:%s\n", a.PostalAreaDescription)
+	s += fmt.Sprintf("RegistDate:%s\n", a.RegistDate)
+	s += fmt.Sprintf("StopDate:%s\n", a.StopDate)
+
+	s += fmt.Sprintf("ACTIVITIES:--------------------\n")
 	for k, v := range a.Activities {
-		fmt.Printf("ACTIVITY #%d\n", k)
-		fmt.Printf("FirmActCode: %s\n", v.FirmActCode)
-		fmt.Printf("FirmActDescr: %s\n", v.FirmActDescr)
-		fmt.Printf("FirmActKind: %s\n", v.FirmActKind)
-		fmt.Printf("FirmActKindDescr: %s\n", v.FirmActKindDescr)
+		s += fmt.Sprintf("ACTIVITY #%d\n", k)
+		s += fmt.Sprintf("FirmActCode: %s\n", v.FirmActCode)
+		s += fmt.Sprintf("FirmActDescr: %s\n", v.FirmActDescr)
+		s += fmt.Sprintf("FirmActKind: %s\n", v.FirmActKind)
+		s += fmt.Sprintf("FirmActKindDescr: %s\n", v.FirmActKindDescr)
 	}
+
+	s += fmt.Sprintf("ErrorDescr: %s\n", a.Error.ErrorDescr)
+	s += fmt.Sprintf("ErrorCode: %s\n", a.Error.ErrorCode)
+
+	return s
 
 }
