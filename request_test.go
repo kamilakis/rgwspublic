@@ -41,12 +41,12 @@ func TestInvalids(t *testing.T) {
 			"password": "hyhyhhyh!",  // wrong pass
 			"error":    "RG_WS_PUBLIC_TOKEN_USERNAME_NOT_AUTHENTICATED",
 		},
-		{
-			"vat":      "1234567890",
-			"username": "KAMILAKIS1", // put valid credentials here
-			"password": "hyhyhhyh!",  // for this test to pass
-			"error":    "RG_WS_PUBLIC_WRONG_AFM",
-		},
+		// {
+		// 	"vat":      "1234567890",
+		// 	"username": "KAMILAKIS1", // put valid credentials here
+		// 	"password": "hyhyhhyh!",  // for this test to pass
+		// 	"error":    "RG_WS_PUBLIC_WRONG_AFM",
+		// },
 	}
 
 	for k, v := range inputs {
