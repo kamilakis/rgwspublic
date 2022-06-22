@@ -1,7 +1,6 @@
 # rgwspublic
 client library for greek GSIS tax service in [Go](https://golang.org/)
 
-[![Build status](https://travis-ci.org/kamilakis/rgwspublic.svg?branch=master)](https://travis-ci.org/kamhlos/rgwspublic)
 [![GoDoc](https://godoc.org/github.com/kamilakis/rgwspublic?status.svg)](https://godoc.org/github.com/kamhlos/rgwspublic)
 
 ## Example
