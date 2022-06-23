@@ -36,22 +36,23 @@ type XMLRGWSPublicVersionInfoResponse struct {
 
 // AFMData is the data relative to an entity's VAT search
 type AFMData struct {
-	AFM                   string `xml:"afm"`                   // ΑΦΜ
-	DOY                   string `xml:"doy"`                   // ΚΩΔΙΚΟΣ ΔΟΥ
-	DOYDesc               string `xml:"doyDescr"`              // ΠΕΡΙΓΡΑΦΗ ΔΟΥ
-	INiFlagDescr          string `xml:"INiFlagDescr"`          // ΦΠ /ΜΗ ΦΠ
-	DeactivationFlag      string `xml:"deactivationFlag"`      // ΕΝΔΕΙΞΗ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ:1=ΕΝΕΡΓΟΣ ΑΦΜ 2=ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ
-	DeactivationFlagDescr string `xml:"deactivationFlagDescr"` // ΕΝΔΕΙΞΗ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ(ΠΕΡΙΓΡΑΦΗ): ΕΝΕΡΓΟΣ ΑΦΜ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ
-	FirmFlagDescr         string `xml:"firmFlagDescr"`         // ΤΙΜΕΣ: ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ, ΜΗ ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ, ΠΡΩΗΝ ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ
-	Onomasia              string `xml:"onomasia"`              // ΕΠΩΝΥΜΙΑ
-	CommerTitle           string `xml:"commerTitle"`           // ΤΙΤΛΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
-	LegalStatusDescr      string `xml:"legalStatusDescr"`      // ΠΕΡΙΓΡΑΦΗ ΜΟΡΦΗΣ ΜΗ Φ.Π.
-	PostalAddress         string `xml:"postalAddress"`         // ΟΔΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
-	PostalAddressNo       string `xml:"postalAddressNo"`       // ΑΡΙΘΜΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
-	PostalZipCode         string `xml:"postalZipCode"`         // ΤΑΧ. ΚΩΔ. ΕΠΙΧΕΙΡΗΣΗΣ
-	PostalAreaDescription string `xml:"postalAreaDescription"` // ΠΕΡΙΟΧΗ ΕΠΙΧΕΙΡΗΣΗΣ
-	RegistDate            string `xml:"registDate"`            // ΗΜ/ΝΙΑ ΕΝΑΡΞΗΣ
-	StopDate              string `xml:"stopDate"`              // ΗΜ/ΝΙΑ ΔΙΑΚΟΠΗΣ
+	XMLName               xml.Name `xml:"RgWsPublicBasicRt_out" json:"-"`
+	AFM                   string   `xml:"afm" json:"afm"`                                             // ΑΦΜ
+	DOY                   string   `xml:"doy" json:"doy"`                                             // ΚΩΔΙΚΟΣ ΔΟΥ
+	DOYDesc               string   `xml:"doyDescr" json:"doy_description"`                            // ΠΕΡΙΓΡΑΦΗ ΔΟΥ
+	INiFlagDescr          string   `xml:"INiFlagDescr" json:"ini_flag_description"`                   // ΦΠ /ΜΗ ΦΠ
+	DeactivationFlag      string   `xml:"deactivationFlag" json:"deactivation_flag"`                  // ΕΝΔΕΙΞΗ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ:1=ΕΝΕΡΓΟΣ ΑΦΜ 2=ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ
+	DeactivationFlagDescr string   `xml:"deactivationFlagDescr" json:"deactivation_flag_description"` // ΕΝΔΕΙΞΗ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ(ΠΕΡΙΓΡΑΦΗ): ΕΝΕΡΓΟΣ ΑΦΜ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ
+	FirmFlagDescr         string   `xml:"firmFlagDescr" json:"firm_flag_description"`                 // ΤΙΜΕΣ: ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ, ΜΗ ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ, ΠΡΩΗΝ ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ
+	Onomasia              string   `xml:"onomasia" json:"onomasia"`                                   // ΕΠΩΝΥΜΙΑ
+	CommerTitle           string   `xml:"commerTitle" json:"commercial_title"`                        // ΤΙΤΛΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
+	LegalStatusDescr      string   `xml:"legalStatusDescr" json:"legal_status_descr"`                 // ΠΕΡΙΓΡΑΦΗ ΜΟΡΦΗΣ ΜΗ Φ.Π.
+	PostalAddress         string   `xml:"postalAddress" json:"postal_address"`                        // ΟΔΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
+	PostalAddressNo       string   `xml:"postalAddressNo" json:"postal_address_no"`                   // ΑΡΙΘΜΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
+	PostalZipCode         string   `xml:"postalZipCode" json:"postal_zip_code"`                       // ΤΑΧ. ΚΩΔ. ΕΠΙΧΕΙΡΗΣΗΣ
+	PostalAreaDescription string   `xml:"postalAreaDescription" json:"postal_area_description"`       // ΠΕΡΙΟΧΗ ΕΠΙΧΕΙΡΗΣΗΣ
+	RegistDate            string   `xml:"registDate" json:"registration_date"`                        // ΗΜ/ΝΙΑ ΕΝΑΡΞΗΣ
+	StopDate              string   `xml:"stopDate" json:"stop_date"`                                  // ΗΜ/ΝΙΑ ΔΙΑΚΟΠΗΣ
 	Activities            []FirmActivities
 	Error                 XMLPErrorRecOut
 }
@@ -64,11 +65,11 @@ type ArrRgWsPublicFirmActRtUser struct {
 
 // FirmActivities is the activities of the entity
 type FirmActivities struct {
-	XMLName          xml.Name `xml:"RgWsPublicFirmActRtUser"`
-	FirmActCode      string   `xml:"firmActDescr"`     // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
-	FirmActDescr     string   `xml:"firmActKind"`      // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
-	FirmActKind      string   `xml:"firmActKindDescr"` // ΕΙΔΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: 1=ΚΥΡΙΑ, 2=ΔΕΥΤΕΡΕΥΟΥΣΑ, 3=ΛΟΙΠΗ, 4=ΒΟΗΘΗΤΙΚΗ
-	FirmActKindDescr string   `xml:"firmActCode"`      // ΠΕΡΙΓΡΑΦΗ ΕΙΔΟΥΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: ΚΥΡΙΑ, ΔΕΥΤΕΡΕΥΟΥΣΑ, ΛΟΙΠΗ, ΒΟΗΘΗΤΙΚΗ
+	XMLName          xml.Name `xml:"RgWsPublicFirmActRtUser" json:"-"`
+	FirmActCode      string   `xml:"firmActDescr" json:"firm_activity_description"`          // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+	FirmActDescr     string   `xml:"firmActKind" json:"firm_activity_kind"`                  // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+	FirmActKind      string   `xml:"firmActKindDescr" json:"firm_activity_kind_description"` // ΕΙΔΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: 1=ΚΥΡΙΑ, 2=ΔΕΥΤΕΡΕΥΟΥΣΑ, 3=ΛΟΙΠΗ, 4=ΒΟΗΘΗΤΙΚΗ
+	FirmActKindDescr string   `xml:"firmActCode" json:"firm_activity_code"`                  // ΠΕΡΙΓΡΑΦΗ ΕΙΔΟΥΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: ΚΥΡΙΑ, ΔΕΥΤΕΡΕΥΟΥΣΑ, ΛΟΙΠΗ, ΒΟΗΘΗΤΙΚΗ
 }
 
 // XMLPCallSeqIDOut is a number returned with a successful service call
@@ -78,8 +79,9 @@ type XMLPCallSeqIDOut struct {
 
 // XMLPErrorRecOut holds error info
 type XMLPErrorRecOut struct {
-	ErrorDescr string `xml:"errorDescr"`
-	ErrorCode  string `xml:"errorCode"`
+	XMLName    xml.Name `xml:"pErrorRec_out" json:"-"`
+	ErrorDescr string   `xml:"errorDescr" json:"error_description"`
+	ErrorCode  string   `xml:"errorCode" json:"error_code"`
 }
 
 const (
@@ -121,6 +123,7 @@ func (a *AFMData) String() string {
 
 	var s string
 
+	s = fmt.Sprintf("XMLName:%s\n", a.XMLName)
 	s += fmt.Sprintf("AFM:%s\n", a.AFM)
 	s += fmt.Sprintf("DOY:%s\n", a.DOY)
 	s += fmt.Sprintf("DOYDesc:%s\n", a.DOYDesc)
