@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -17,7 +19,7 @@ func Version() (string, error) {
 	env := `<?xml version="1.0" encoding="UTF-8"?>
 			<env:Envelope
 			xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-			xmlns:ns="http://gr/gsis/rgwspublic/RgWsPublic.wsdl"
+			xmlns:ns="https://www1.gsis.gr/wsaade/RgWsPublic2/RgWsPublic2?WSDL.wsdl"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 			<env:Header/>
@@ -27,9 +29,9 @@ func Version() (string, error) {
 			</env:Envelope>`
 
 	header := http.Header{}
-	header.Set("Content-Type", "text/xml")
+	header.Set("Content-Type", "application/soap+xml")
 	header.Set("Connection", "Close")
-	header.Set("Content-Length", string(len(env)))
+	header.Set("Content-Length", strconv.Itoa(len(env)))
 
 	req, err := http.NewRequest("POST", Endpoint, strings.NewReader(env))
 	if err != nil {
@@ -49,7 +51,7 @@ func Version() (string, error) {
 		// decode error
 		s := parseXMLError(resp)
 
-		return version, fmt.Errorf("error code: %s, description: %s", s.ErrorCode, s.ErrorDescr)
+		return version, fmt.Errorf("error code: %s, description: %s", s.ErrorCode, s.ErrorDescription)
 	}
 
 	// parse response
@@ -65,9 +67,9 @@ func Version() (string, error) {
 // AFMInfo gets info associated with a VAT number
 // accepts a called by VAT and a called for VAT, username and password
 // returns AFMData or an error
-func AFMInfo(calledby, calledfor, user, pass string) (*AFMData, error) {
+func AFMInfo(calledby, calledfor, user, pass string) (*ResultTypeData, error) {
 
-	info := &AFMData{}
+	info := &ResultTypeData{}
 
 	// vat number must be between 9 and 12 chars
 	if len(calledfor) < 9 || len(calledfor) > 12 {
@@ -89,59 +91,31 @@ func AFMInfo(calledby, calledfor, user, pass string) (*AFMData, error) {
 	}
 
 	env := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
-		<env:Envelope
-		xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-		xmlns:ns="http://gr/gsis/rgwspublic/RgWsPublic.wsdl"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-		xmlns:ns1="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-
-		1.0.xsd">
-		<env:Header>
-		<ns1:Security>
-		<ns1:UsernameToken>
-		<ns1:Username>%v</ns1:Username>
-		<ns1:Password>%v</ns1:Password>
-		</ns1:UsernameToken>
-		</ns1:Security>
-		</env:Header>
-		<env:Body>
-		<ns:rgWsPublicAfmMethod>
-		<RgWsPublicInputRt_in xsi:type="ns:RgWsPublicInputRtUser">
-		<ns:afmCalledBy>%v</ns:afmCalledBy>
-		<ns:afmCalledFor>%v</ns:afmCalledFor>
-		</RgWsPublicInputRt_in>
-		<RgWsPublicBasicRt_out xsi:type="ns:RgWsPublicBasicRtUser">
-		<ns:afm xsi:nil="true"/>
-		<ns:stopDate xsi:nil="true"/>
-		<ns:postalAddressNo xsi:nil="true"/>
-		<ns:doyDescr xsi:nil="true"/>
-		<ns:doy xsi:nil="true"/>
-		<ns:onomasia xsi:nil="true"/>
-		<ns:legalStatusDescr xsi:nil="true"/>
-		<ns:registDate xsi:nil="true"/>
-		<ns:deactivationFlag xsi:nil="true"/>
-		<ns:deactivationFlagDescr xsi:nil="true"/>
-		<ns:postalAddress xsi:nil="true"/>
-		<ns:firmFlagDescr xsi:nil="true"/>
-		<ns:commerTitle xsi:nil="true"/>
-		<ns:postalAreaDescription xsi:nil="true"/>
-		<ns:INiFlagDescr xsi:nil="true"/>
-		<ns:postalZipCode xsi:nil="true"/>
-		</RgWsPublicBasicRt_out>
-		<arrayOfRgWsPublicFirmActRt_out xsi:type="ns:RgWsPublicFirmActRtUserArray"/>
-		<pCallSeqId_out xsi:type="xsd:decimal">0</pCallSeqId_out>
-		<pErrorRec_out xsi:type="ns:GenWsErrorRtUser">
-		<ns:errorDescr xsi:nil="true"/>
-		<ns:errorCode xsi:nil="true"/>
-		</pErrorRec_out>
-		</ns:rgWsPublicAfmMethod>
-		</env:Body>
-		</env:Envelope>`, user, pass, calledby, calledfor)
+	<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:ns1="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ns2="http://rgwspublic2/RgWsPublic2Service" xmlns:ns3="http://rgwspublic2/RgWsPublic2">
+	<env:Header>
+	   <ns1:Security>
+		  <ns1:UsernameToken>
+			 <ns1:Username>A801141110</ns1:Username>
+			 <ns1:Password>A801141110</ns1:Password>
+		  </ns1:UsernameToken>
+	   </ns1:Security>
+	</env:Header>
+	<env:Body>
+	   <ns2:rgWsPublic2AfmMethod>
+		  <ns2:INPUT_REC>
+			 <ns3:afm_called_by/>
+			 <ns3:afm_called_for>801141110</ns3:afm_called_for>
+		  </ns2:INPUT_REC>
+	   </ns2:rgWsPublic2AfmMethod>
+	</env:Body>
+ </env:Envelope> `, user, pass, calledfor)
 
 	header := http.Header{}
-	header.Set("Content-Type", "text/xml")
-	header.Set("Connection", "Close")
-	header.Set("Content-Length", string(len(env)))
+	header.Set("Content-Type", "application/soap+xml")
+	header.Set("Connection", "keep-alive")
+	header.Set("Host", "www1.gsis.gr")
+	header.Set("Accept-Encoding", "gzip, deflate, br")
+	header.Set("Content-Length", strconv.Itoa(len(env)))
 
 	req, err := http.NewRequest("POST", Endpoint, strings.NewReader(env))
 	if err != nil {
@@ -180,21 +154,23 @@ func parseVersion(r *http.Response) (string, error) {
 
 	xmlr := XMLResponse{}
 
-	err = xml.Unmarshal(rbody, &xmlr)
+	fmt.Println(rbody)
+	err = xml.Unmarshal([]byte(rbody), &xmlr)
 	if err != nil {
 		fmt.Println("error unmarshaling xml", err)
 	}
 
-	version := xmlr.Body.RGWSPublicVersionInfoResponse.Result
+	version := xmlr.Body.AFMMethodResponse.AFMCalledByRec.AFMCalledBy
 
 	return version, nil
 }
 
 // helper function to get AFM data from an xml response
-func parseAFMInfo(r *http.Response) (*AFMData, error) {
+func parseAFMInfo(r *http.Response) (*ResultTypeData, error) {
 
 	// read response Body
 	rbody, err := ioutil.ReadAll(r.Body)
+	fmt.Println(string(rbody))
 	if err != nil {
 		fmt.Println("error reading response body:", err)
 	}
@@ -206,18 +182,19 @@ func parseAFMInfo(r *http.Response) (*AFMData, error) {
 	err = xml.Unmarshal(rbody, &xmlr)
 	if err != nil {
 		fmt.Println("error unmarshaling xml", err)
+		return nil, err
 	}
 
 	// can't decide whether to change those horrific names or not
-	data := xmlr.Body.RGWSPublicAfmMethodResponse.RgWsPublicBasicRtOut
-	data.Activities = xmlr.Body.RGWSPublicAfmMethodResponse.ArrayOfRgWsPublicFirmActRtOut.RgWsPublicFirmActRtUser
-	data.Error = xmlr.Body.RGWSPublicAfmMethodResponse.PErrorRecOut
+	data := xmlr.Body.AFMMethodResponse.Result.ResultType
+	// data.Activities = xmlr.Body.RGWSPublicAfmMethodResponse.ArrayOfRgWsPublicFirmActRtOut.RgWsPublicFirmActRtUser
+	// data.Error = xmlr.Body.RGWSPublicAfmMethodResponse.PErrorRecOut
 
 	return &data, nil
 }
 
 // helper function to get error from an xml response
-func parseXMLError(r *http.Response) XMLPErrorRecOut {
+func parseXMLError(r *http.Response) ErrorRecData {
 
 	// read response body
 	rbody, err := ioutil.ReadAll(r.Body)
@@ -225,15 +202,22 @@ func parseXMLError(r *http.Response) XMLPErrorRecOut {
 		fmt.Println("error reading response body:", err)
 	}
 
+	xmlFile, err := os.Open(string(rbody))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+
 	// create an empty struct to unmarshal response body into
 	xmlr := XMLResponse{}
 
 	// parse response body
-	err = xml.Unmarshal(rbody, &xmlr)
+	err = xml.Unmarshal(byteValue, &xmlr)
 	if err != nil {
 		fmt.Println("error unmarshaling xml:", err)
 	}
 
 	// return the child element that contains the actual error
-	return xmlr.Body.RGWSPublicAfmMethodResponse.PErrorRecOut
+	return xmlr.Body.AFMMethodResponse.Result.ResultType.ErrorRec
 }
