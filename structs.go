@@ -66,10 +66,10 @@ type ArrRgWsPublicFirmActRtUser struct {
 // FirmActivities is the activities of the entity
 type FirmActivities struct {
 	XMLName          xml.Name `xml:"RgWsPublicFirmActRtUser" json:"-"`
-	FirmActCode      string   `xml:"firmActDescr" json:"firm_activity_description"`          // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
-	FirmActDescr     string   `xml:"firmActKind" json:"firm_activity_kind"`                  // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
-	FirmActKind      string   `xml:"firmActKindDescr" json:"firm_activity_kind_description"` // ΕΙΔΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: 1=ΚΥΡΙΑ, 2=ΔΕΥΤΕΡΕΥΟΥΣΑ, 3=ΛΟΙΠΗ, 4=ΒΟΗΘΗΤΙΚΗ
-	FirmActKindDescr string   `xml:"firmActCode" json:"firm_activity_code"`                  // ΠΕΡΙΓΡΑΦΗ ΕΙΔΟΥΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: ΚΥΡΙΑ, ΔΕΥΤΕΡΕΥΟΥΣΑ, ΛΟΙΠΗ, ΒΟΗΘΗΤΙΚΗ
+	FirmActCode      string   `xml:"firmActCode" json:"firm_activity_code"`                  // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+	FirmActDescr     string   `xml:"firmActDescr" json:"firm_activity_description"`          // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+	FirmActKind      string   `xml:"firmActKind" json:"firm_activity_kind"`                  // ΕΙΔΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: 1=ΚΥΡΙΑ, 2=ΔΕΥΤΕΡΕΥΟΥΣΑ, 3=ΛΟΙΠΗ, 4=ΒΟΗΘΗΤΙΚΗ
+	FirmActKindDescr string   `xml:"firmActKindDescr" json:"firm_activity_kind_description"` // ΠΕΡΙΓΡΑΦΗ ΕΙΔΟΥΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: ΚΥΡΙΑ, ΔΕΥΤΕΡΕΥΟΥΣΑ, ΛΟΙΠΗ, ΒΟΗΘΗΤΙΚΗ
 }
 
 // XMLPCallSeqIDOut is a number returned with a successful service call
