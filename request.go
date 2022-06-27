@@ -17,20 +17,18 @@ func Version() (string, error) {
 	var version string
 
 	env := `<?xml version="1.0" encoding="UTF-8"?>
-			<env:Envelope
-			xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
-			xmlns:ns="https://www1.gsis.gr/wsaade/RgWsPublic2/RgWsPublic2?WSDL.wsdl"
-			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-			<env:Header/>
-			<env:Body>
-			<ns:rgWsPublicVersionInfo/>
-			</env:Body>
-			</env:Envelope>`
+	<soap:Envelope 
+	xmlns:soap="http://www.w3.org/2003/05/soap-envelope" 
+	xmlns:rgw="http://rgwspublic2/RgWsPublic2Service">
+	<soap:Header/>
+	<soap:Body>
+	   <rgw:rgWsPublic2VersionInfo/>
+	</soap:Body>
+ </soap:Envelope>`
 
 	header := http.Header{}
 	header.Set("Content-Type", "application/soap+xml")
-	header.Set("Connection", "Close")
+	header.Set("Connection", "keep-alive")
 	header.Set("Content-Length", strconv.Itoa(len(env)))
 
 	req, err := http.NewRequest("POST", Endpoint, strings.NewReader(env))
@@ -95,8 +93,8 @@ func AFMInfo(calledby, calledfor, user, pass string) (*ResultTypeData, error) {
 	<env:Header>
 	   <ns1:Security>
 		  <ns1:UsernameToken>
-			 <ns1:Username>A801141110</ns1:Username>
-			 <ns1:Password>A801141110</ns1:Password>
+			 <ns1:Username>%v</ns1:Username>
+			 <ns1:Password>%v</ns1:Password>
 		  </ns1:UsernameToken>
 	   </ns1:Security>
 	</env:Header>
@@ -104,7 +102,7 @@ func AFMInfo(calledby, calledfor, user, pass string) (*ResultTypeData, error) {
 	   <ns2:rgWsPublic2AfmMethod>
 		  <ns2:INPUT_REC>
 			 <ns3:afm_called_by/>
-			 <ns3:afm_called_for>801141110</ns3:afm_called_for>
+			 <ns3:afm_called_for>%v</ns3:afm_called_for>
 		  </ns2:INPUT_REC>
 	   </ns2:rgWsPublic2AfmMethod>
 	</env:Body>
@@ -113,8 +111,6 @@ func AFMInfo(calledby, calledfor, user, pass string) (*ResultTypeData, error) {
 	header := http.Header{}
 	header.Set("Content-Type", "application/soap+xml")
 	header.Set("Connection", "keep-alive")
-	header.Set("Host", "www1.gsis.gr")
-	header.Set("Accept-Encoding", "gzip, deflate, br")
 	header.Set("Content-Length", strconv.Itoa(len(env)))
 
 	req, err := http.NewRequest("POST", Endpoint, strings.NewReader(env))
@@ -154,32 +150,35 @@ func parseVersion(r *http.Response) (string, error) {
 
 	xmlr := XMLResponse{}
 
-	fmt.Println(rbody)
 	err = xml.Unmarshal([]byte(rbody), &xmlr)
 	if err != nil {
 		fmt.Println("error unmarshaling xml", err)
 	}
 
-	version := xmlr.Body.AFMMethodResponse.AFMCalledByRec.AFMCalledBy
+	// version := xmlr.Body.AFMMethodResponse.AFMCalledByRec.AFMCalledBy
+	version := xmlr.Body.PublicVersionInfoResponse.Result
 
 	return version, nil
 }
 
 // helper function to get AFM data from an xml response
+// func parseAFMInfo(r *http.Response) (*ResultTypeData, error) {
 func parseAFMInfo(r *http.Response) (*ResultTypeData, error) {
 
 	// read response Body
 	rbody, err := ioutil.ReadAll(r.Body)
-	fmt.Println(string(rbody))
 	if err != nil {
 		fmt.Println("error reading response body:", err)
 	}
+
+	// print response body
+	// fmt.Println(string(rbody))
 
 	// create an empty struct to unmarshal xml into
 	xmlr := XMLResponse{}
 
 	// parse response body into struct
-	err = xml.Unmarshal(rbody, &xmlr)
+	err = xml.Unmarshal([]byte(rbody), &xmlr)
 	if err != nil {
 		fmt.Println("error unmarshaling xml", err)
 		return nil, err
@@ -187,7 +186,7 @@ func parseAFMInfo(r *http.Response) (*ResultTypeData, error) {
 
 	// can't decide whether to change those horrific names or not
 	data := xmlr.Body.AFMMethodResponse.Result.ResultType
-	// data.Activities = xmlr.Body.RGWSPublicAfmMethodResponse.ArrayOfRgWsPublicFirmActRtOut.RgWsPublicFirmActRtUser
+	data.BasicRec.Activities = xmlr.Body.AFMMethodResponse.Result.ResultType.Activities.Activities
 	// data.Error = xmlr.Body.RGWSPublicAfmMethodResponse.PErrorRecOut
 
 	return &data, nil
@@ -219,5 +218,7 @@ func parseXMLError(r *http.Response) ErrorRecData {
 	}
 
 	// return the child element that contains the actual error
-	return xmlr.Body.AFMMethodResponse.Result.ResultType.ErrorRec
+	// return xmlr.Body.AFMMethodResponse.Result.ResultType.ErrorRec
+	test := ErrorRecData{}
+	return test
 }

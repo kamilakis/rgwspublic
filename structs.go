@@ -13,21 +13,20 @@ type XMLResponse struct {
 
 // XMLBody is the body of a response
 type XMLBody struct {
-	XMLName           xml.Name `xml:"Body"`
-	AFMMethodResponse AFMMethodResponse
+	XMLName                   xml.Name `xml:"Body"`
+	AFMMethodResponse         AFMMethodResponseData
+	PublicVersionInfoResponse PublicVersionInfoResponseData
 }
 
 // XMLRGWSPublicAfmMethodResponse is the response to a publicAFM method
-type AFMMethodResponse struct {
-	XMLName        xml.Name `xml:"rgWsPublic2AfmMethodResponse" json:"-"`
-	Result         ResultData
-	AFMCalledByRec AFMCalledByRecData
-	BasicRec       BasicRecData
+type AFMMethodResponseData struct {
+	XMLName xml.Name `xml:"rgWsPublic2AfmMethodResponse" json:"-"`
+	Result  ResultData
 }
 
-// XMLRGWSPublicVersionInfoResponse holds version info
-type XMLRGWSPublicVersionInfoResponse struct {
-	XMLName xml.Name `xml:"rgWsPublicVersionInfoResponse" json:"-"`
+// PublicVersionInfoResponseData holds version info
+type PublicVersionInfoResponseData struct {
+	XMLName xml.Name `xml:"rgWsPublic2VersionInfoResponse"`
 	Result  string   `xml:"result"`
 }
 
@@ -37,10 +36,12 @@ type ResultData struct {
 }
 
 type ResultTypeData struct {
-	XMLName            xml.Name `xml:"rg_ws_public2_result_rtType" json:"-"`
-	CallSeqID          CallSeqIDData
-	ErrorRec           ErrorRecData
-	AFMCalledByRecData AFMCalledByRecData
+	XMLName        xml.Name `xml:"rg_ws_public2_result_rtType" json:"-"`
+	CallSeqID      string   `xml:"call_seq_id" json:"call_seq_id"`
+	AFMCalledByRec AFMCalledByRecData
+	BasicRec       BasicRecData
+	Activities     FirmActivityTabData
+	ErrorRec       ErrorRecData
 }
 
 type CallSeqIDData struct {
@@ -50,7 +51,7 @@ type CallSeqIDData struct {
 type ErrorRecData struct {
 	XMLName          xml.Name `xml:"error_rec" json:"-"`
 	ErrorCode        string   `xml:"error_code" json:"error_code"`
-	ErrorDescription string   `xml:"error_description" json:"error_description"`
+	ErrorDescription string   `xml:"error_descr" json:"error_description"`
 }
 
 // AFMDCalledByData is the data relative to who did the search
@@ -61,7 +62,7 @@ type AFMCalledByRecData struct {
 	TokenAFMFullName    string   `xml:"token_afm_fullname" json:"token_afm_fullname"`
 	AFMCalledBy         string   `xml:"afm_called_by" json:"afm_called_by"`
 	AFMCalledByFullName string   `xml:"afm_called_by_fullname" json:"afm_called_by_fullname"`
-	Activities          []FirmActivities
+	AsOnDate            string   `xml:"as_on_date" json:"as_on_date"`
 }
 
 // BasicRecData is the data relative to an entity's VAT search
@@ -84,16 +85,16 @@ type BasicRecData struct {
 	RegistrationDate            string   `xml:"regist_date" json:"registration_date"`                        // ΗΜ/ΝΙΑ ΕΝΑΡΞΗΣ
 	StopDate                    string   `xml:"stop_date" json:"stop_date"`                                  // ΗΜ/ΝΙΑ ΔΙΑΚΟΠΗΣ
 	NormalVATSystemFlag         string   `xml:"normal_vat_system_flag" json:"normal_vat_system_flag"`
-	Activities                  FirmActivities
+	Activities                  []FirmActivities
 }
 
 // FirmActivities is the activities of the entity
-type FirmActivities struct {
-	XMLName xml.Name `xml:"firm_act_tab" json:"-"`
-	Items   []Item
+type FirmActivityTabData struct {
+	XMLName    xml.Name `xml:"firm_act_tab" json:"-"`
+	Activities []FirmActivities
 }
 
-type Item struct {
+type FirmActivities struct {
 	XMLName             xml.Name `xml:"item" json:"-"`
 	FirmActCode         string   `xml:"firm_act_code" json:"firm_act_code"`                   // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
 	FirmActDescriptionn string   `xml:"firm_act_descr" json:"firm_act_description"`           // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
@@ -103,7 +104,7 @@ type Item struct {
 
 const (
 	// Endpoint is the url for WSDL service
-	Endpoint                                       = "https://www1.gsis.gr/wsaade/RgWsPublic2/RgWsPublic2?WSDL"
+	Endpoint                                       = "https://www1.gsis.gr/wsaade/RgWsPublic2/RgWsPublic2"
 	RG_WS_PUBLIC_AFM_CALLED_BY_BLOCKED             = "Ο χρήστης που καλεί την υπηρεσία έχει προσωρινά αποκλειστεί από τη χρήση της."
 	RG_WS_PUBLIC_AFM_CALLED_BY_NOT_FOUND           = "Ο Α.Φ.Μ. για τον οποίο γίνεται η κλήση δε βρέθηκε στους έγκυρους Α.Φ.Μ. του Μητρώου TAXIS."
 	RG_WS_PUBLIC_EPIT_NF                           = "O Α.Φ.Μ. για τον οποίο ζητούνται πληροφορίες δεν ανήκει και δεν ανήκε ποτέ σε νομικό πρόσωπο, νομική οντότητα, ή φυσικό πρόσωπο με εισόδημα από επιχειρηματική δραστηριότητα."
@@ -136,7 +137,7 @@ func (a *ResultTypeData) JSON() (string, error) {
 	return string(j), nil
 }
 
-func (a *ResultTypeData) String() string {
+func (a *ResultData) String() string {
 
 	var s string
 
