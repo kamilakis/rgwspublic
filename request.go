@@ -70,7 +70,7 @@ func Version() (*string, error) {
 // AFMInfo gets info associated with a VAT number
 // accepts a called by VAT and a called for VAT, username and password
 // returns AFMData or an error
-func AFMInfo(calledby, calledfor, user, pass string) (*VATInfo, error) {
+func GetVATInfo(calledby, calledfor, user, pass string) (*VATInfo, error) {
 
 	// vat number must be between 9 and 12 chars
 	if len(calledfor) < 9 || len(calledfor) > 12 {
