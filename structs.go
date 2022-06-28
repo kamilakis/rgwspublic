@@ -1,106 +1,106 @@
 package rgwspublic
 
 import (
-	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 )
 
 // XMLResponse is where we parse an http response
 type XMLResponse struct {
 	XMLName xml.Name `xml:"Envelope"`
-	Body    XMLBody
+	Body    XMLBody  `xml:"Body"`
 }
 
 // XMLBody is the body of a response
 type XMLBody struct {
-	XMLName                   xml.Name `xml:"Body"`
-	AFMMethodResponse         AFMMethodResponseData
-	PublicVersionInfoResponse PublicVersionInfoResponseData
+	VATInfo VATInfo    `xml:"rgWsPublic2AfmMethodResponse>result>rg_ws_public2_result_rtType"`
+	Version *string    `xml:"rgWsPublic2VersionInfoResponse>result"`
+	Error   *ErrorInfo `xml:"Fault" json:"error,omitempty"`
 }
 
-// XMLRGWSPublicAfmMethodResponse is the response to a publicAFM method
-type AFMMethodResponseData struct {
-	XMLName xml.Name `xml:"rgWsPublic2AfmMethodResponse" json:"-"`
-	Result  ResultData
+func (b *XMLBody) error() error {
+
+	if b.Error == nil {
+		return nil
+	}
+
+	if b.Error.Code == "" {
+		return nil
+	}
+
+	return errors.New(b.Error.Message)
 }
 
-// PublicVersionInfoResponseData holds version info
-type PublicVersionInfoResponseData struct {
-	XMLName xml.Name `xml:"rgWsPublic2VersionInfoResponse"`
-	Result  string   `xml:"result"`
+// ErrorInfo holds error info
+type ErrorInfo struct {
+	Code    string `xml:"Code>Value" json:"code"`
+	Message string `xml:"Reason>Text" json:"message"`
 }
 
-type ResultData struct {
-	XMLName    xml.Name `xml:"result" json:"-"`
-	ResultType ResultTypeData
+type VATInfo struct {
+	CallSeqID  int            `xml:"call_seq_id" json:"call_seq_id"`
+	CalledBy   VATCalledBy    `xml:"afm_called_by_rec" json:"called_by"`
+	Result     VATResult      `xml:"basic_rec"  json:"result"`
+	Activities []FirmActivity `xml:"firm_act_tab>item" json:"activities"`
+	Error      *ErrorVATInfo  `xml:"error_rec" json:"error,omitempty"`
 }
 
-type ResultTypeData struct {
-	XMLName        xml.Name `xml:"rg_ws_public2_result_rtType" json:"-"`
-	CallSeqID      string   `xml:"call_seq_id" json:"call_seq_id"`
-	AFMCalledByRec AFMCalledByRecData
-	BasicRec       BasicRecData
-	Activities     FirmActivityTabData `json:"-"`
-	Error          ErrorRecData
+func (b *VATInfo) error() error {
+
+	if b.Error == nil {
+		return nil
+	}
+
+	if b.Error.Code == "" {
+		return nil
+	}
+
+	return errors.New(b.Error.Message)
 }
 
-type CallSeqIDData struct {
-	CallSeqID string `xml:"call_seq_id" json:"call_seq_id"`
+// ErrorInfo holds error info
+type ErrorVATInfo struct {
+	Code    string `xml:"error_code" json:"code"`
+	Message string `xml:"error_descr" json:"message"`
 }
 
-type ErrorRecData struct {
-	XMLName          xml.Name `xml:"error_rec" json:"-"`
-	ErrorCode        string   `xml:"error_code" json:"error_code"`
-	ErrorDescription string   `xml:"error_descr" json:"error_description"`
+// VATCalledBy is the data relative to who did the search
+type VATCalledBy struct {
+	TokenUsername       string `xml:"token_username" json:"username"`
+	TokenAFM            string `xml:"token_afm" json:"vat"`
+	TokenAFMFullName    string `xml:"token_afm_fullname" json:"vat_fullname"`
+	AFMCalledBy         string `xml:"afm_called_by" json:"called_by"`
+	AFMCalledByFullName string `xml:"afm_called_by_fullname" json:"vat_called_by_fullname"`
+	AsOnDate            string `xml:"as_on_date" json:"as_on_date"`
 }
 
-// AFMDCalledByData is the data relative to who did the search
-type AFMCalledByRecData struct {
-	XMLName             xml.Name `xml:"afm_called_by_rec" json:"-"`
-	TokenUsername       string   `xml:"token_username" json:"token_username"`
-	TokenAFM            string   `xml:"token_afm" json:"token_afm"`
-	TokenAFMFullName    string   `xml:"token_afm_fullname" json:"token_afm_fullname"`
-	AFMCalledBy         string   `xml:"afm_called_by" json:"afm_called_by"`
-	AFMCalledByFullName string   `xml:"afm_called_by_fullname" json:"afm_called_by_fullname"`
-	AsOnDate            string   `xml:"as_on_date" json:"as_on_date"`
+// VATResult is the data relative to an entity's VAT search
+type VATResult struct {
+	AFM                         string `xml:"afm" json:"afm"`                                              // ΑΦΜ
+	DOY                         string `xml:"doy" json:"doy"`                                              // ΚΩΔΙΚΟΣ ΔΟΥ
+	DOYDescription              string `xml:"doy_descr" json:"doy_description"`                            // ΠΕΡΙΓΡΑΦΗ ΔΟΥ
+	InitialFlagDescription      string `xml:"i_ni_flag_descr" json:"initial_flag_description"`             // ΦΠ /ΜΗ ΦΠ
+	DeactivationFlag            string `xml:"deactivation_flag" json:"deactivation_flag"`                  // ΕΝΔΕΙΞΗ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ:1=ΕΝΕΡΓΟΣ ΑΦΜ 2=ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ
+	DeactivationFlagDescription string `xml:"deactivation_flag_desc" json:"deactivation_flag_description"` // ΕΝΔΕΙΞΗ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ(ΠΕΡΙΓΡΑΦΗ): ΕΝΕΡΓΟΣ ΑΦΜ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ
+	FirmFlagDescription         string `xml:"firm_flag_descr" json:"firm_flag_description"`                // ΤΙΜΕΣ: ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ, ΜΗ ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ, ΠΡΩΗΝ ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ
+	Onomasia                    string `xml:"onomasia" json:"onomasia"`                                    // ΕΠΩΝΥΜΙΑ
+	CommercialTitle             string `xml:"commer_title" json:"commercial_title"`                        // ΤΙΤΛΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
+	LegalStatusDescription      string `xml:"legal_status_descr" json:"legal_status_descr"`                // ΠΕΡΙΓΡΑΦΗ ΜΟΡΦΗΣ ΜΗ Φ.Π.
+	PostalAddress               string `xml:"postal_address" json:"postal_address"`                        // ΟΔΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
+	PostalAddressNo             string `xml:"postal_address_no" json:"postal_address_no"`                  // ΑΡΙΘΜΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
+	PostalZipCode               string `xml:"postal_zip_code" json:"postal_zip_code"`                      // ΤΑΧ. ΚΩΔ. ΕΠΙΧΕΙΡΗΣΗΣ
+	PostalAreaDescription       string `xml:"postal_area_description" json:"postal_area_description"`      // ΠΕΡΙΟΧΗ ΕΠΙΧΕΙΡΗΣΗΣ
+	RegistrationDate            string `xml:"regist_date" json:"registration_date"`                        // ΗΜ/ΝΙΑ ΕΝΑΡΞΗΣ
+	StopDate                    string `xml:"stop_date" json:"stop_date"`                                  // ΗΜ/ΝΙΑ ΔΙΑΚΟΠΗΣ
+	NormalVATSystemFlag         string `xml:"normal_vat_system_flag" json:"normal_vat_system_flag"`
 }
 
-// BasicRecData is the data relative to an entity's VAT search
-type BasicRecData struct {
-	XMLName                     xml.Name `xml:"basic_rec" json:"-"`
-	AFM                         string   `xml:"afm" json:"afm"`                                              // ΑΦΜ
-	DOY                         string   `xml:"doy" json:"doy"`                                              // ΚΩΔΙΚΟΣ ΔΟΥ
-	DOYDescription              string   `xml:"doy_descr" json:"doy_description"`                            // ΠΕΡΙΓΡΑΦΗ ΔΟΥ
-	InitialFlagDescription      string   `xml:"i_ni_flag_descr" json:"initial_flag_description"`             // ΦΠ /ΜΗ ΦΠ
-	DeactivationFlag            string   `xml:"deactivation_flag" json:"deactivation_flag"`                  // ΕΝΔΕΙΞΗ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ:1=ΕΝΕΡΓΟΣ ΑΦΜ 2=ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ
-	DeactivationFlagDescription string   `xml:"deactivation_flag_desc" json:"deactivation_flag_description"` // ΕΝΔΕΙΞΗ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ(ΠΕΡΙΓΡΑΦΗ): ΕΝΕΡΓΟΣ ΑΦΜ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟΣ ΑΦΜ
-	FirmFlagDescription         string   `xml:"firm_flag_descr" json:"firm_flag_description"`                // ΤΙΜΕΣ: ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ, ΜΗ ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ, ΠΡΩΗΝ ΕΠΙΤΗΔΕΥΜΑΤΙΑΣ
-	Onomasia                    string   `xml:"onomasia" json:"onomasia"`                                    // ΕΠΩΝΥΜΙΑ
-	CommercialTitle             string   `xml:"commer_title" json:"commercial_title"`                        // ΤΙΤΛΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
-	LegalStatusDescription      string   `xml:"legal_status_descr" json:"legal_status_descr"`                // ΠΕΡΙΓΡΑΦΗ ΜΟΡΦΗΣ ΜΗ Φ.Π.
-	PostalAddress               string   `xml:"postal_address" json:"postal_address"`                        // ΟΔΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
-	PostalAddressNo             string   `xml:"postal_address_no" json:"postal_address_no"`                  // ΑΡΙΘΜΟΣ ΕΠΙΧΕΙΡΗΣΗΣ
-	PostalZipCode               string   `xml:"postal_zip_code" json:"postal_zip_code"`                      // ΤΑΧ. ΚΩΔ. ΕΠΙΧΕΙΡΗΣΗΣ
-	PostalAreaDescription       string   `xml:"postal_area_description" json:"postal_area_description"`      // ΠΕΡΙΟΧΗ ΕΠΙΧΕΙΡΗΣΗΣ
-	RegistrationDate            string   `xml:"regist_date" json:"registration_date"`                        // ΗΜ/ΝΙΑ ΕΝΑΡΞΗΣ
-	StopDate                    string   `xml:"stop_date" json:"stop_date"`                                  // ΗΜ/ΝΙΑ ΔΙΑΚΟΠΗΣ
-	NormalVATSystemFlag         string   `xml:"normal_vat_system_flag" json:"normal_vat_system_flag"`
-	Activities                  []FirmActivities
-}
-
-// FirmActivities is the activities of the entity
-type FirmActivityTabData struct {
-	XMLName    xml.Name         `xml:"firm_act_tab" json:"-"`
-	Activities []FirmActivities `xml:"item" json:"-"`
-}
-
-type FirmActivities struct {
-	// XMLName             xml.Name `xml:"item" json:"-"`
-	FirmActCode         string `xml:"firm_act_code" json:"firm_act_code"`                   // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
-	FirmActDescriptionn string `xml:"firm_act_descr" json:"firm_act_description"`           // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
-	FirmActKind         string `xml:"firm_act_kind" json:"firm_activity_kind"`              // ΕΙΔΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: 1=ΚΥΡΙΑ, 2=ΔΕΥΤΕΡΕΥΟΥΣΑ, 3=ΛΟΙΠΗ, 4=ΒΟΗΘΗΤΙΚΗ
-	FirmActKindDescr    string `xml:"firm_act_kind_descr" json:"firm_act_kind_description"` // ΠΕΡΙΓΡΑΦΗ ΕΙΔΟΥΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: ΚΥΡΙΑ, ΔΕΥΤΕΡΕΥΟΥΣΑ, ΛΟΙΠΗ, ΒΟΗΘΗΤΙΚΗ
+type FirmActivity struct {
+	Code         int    `xml:"firm_act_code" json:"code"`                   // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+	Descriptionn string `xml:"firm_act_descr" json:"description"`           // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+	Kind         int    `xml:"firm_act_kind" json:"kind"`                   // ΕΙΔΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: 1=ΚΥΡΙΑ, 2=ΔΕΥΤΕΡΕΥΟΥΣΑ, 3=ΛΟΙΠΗ, 4=ΒΟΗΘΗΤΙΚΗ
+	KindDescr    string `xml:"firm_act_kind_descr" json:"kind_description"` // ΠΕΡΙΓΡΑΦΗ ΕΙΔΟΥΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: ΚΥΡΙΑ, ΔΕΥΤΕΡΕΥΟΥΣΑ, ΛΟΙΠΗ, ΒΟΗΘΗΤΙΚΗ
 }
 
 const (
@@ -127,49 +127,38 @@ const (
 	RG_WS_PUBLIC_WRONG_AFM                         = "O Α.Φ.Μ. για τον οποίο ζητούνται πληροφορίες δεν είναι έγκυρος."
 )
 
-func (a *ResultTypeData) JSON() (string, error) {
-	var j []byte
-	j, err := json.MarshalIndent(&a, "", "\t")
-	if err != nil {
-		return "", err
-	}
-
-	return string(j), nil
-}
-
-func (a *ResultTypeData) String() string {
+func (a *VATInfo) String() string {
 	var s string
 
-	s = fmt.Sprintf("XMLName:%s\n", a.XMLName)
-	s += fmt.Sprintf("afm:%s\n", a.BasicRec.AFM)
-	s += fmt.Sprintf("doy:%s\n", a.BasicRec.DOY)
-	s += fmt.Sprintf("doy_descr:%s\n", a.BasicRec.DOYDescription)
-	s += fmt.Sprintf("i_ni_flag_descr:%s\n", a.BasicRec.InitialFlagDescription)
-	s += fmt.Sprintf("deactivation_flag:%s\n", a.BasicRec.DeactivationFlag)
-	s += fmt.Sprintf("deactivation_flag_desc:%s\n", a.BasicRec.DeactivationFlagDescription)
-	s += fmt.Sprintf("firm_flag_descr:%s\n", a.BasicRec.FirmFlagDescription)
-	s += fmt.Sprintf("onomasia:%s\n", a.BasicRec.Onomasia)
-	s += fmt.Sprintf("commer_title:%s\n", a.BasicRec.CommercialTitle)
-	s += fmt.Sprintf("legal_status_descr:%s\n", a.BasicRec.LegalStatusDescription)
-	s += fmt.Sprintf("postal_address:%s\n", a.BasicRec.PostalAddress)
-	s += fmt.Sprintf("postal_address_no:%s\n", a.BasicRec.PostalAddressNo)
-	s += fmt.Sprintf("postal_zip_code:%s\n", a.BasicRec.PostalZipCode)
-	s += fmt.Sprintf("postal_area_description:%s\n", a.BasicRec.PostalAreaDescription)
-	s += fmt.Sprintf("regist_date:%s\n", a.BasicRec.RegistrationDate)
-	s += fmt.Sprintf("stop_date:%s\n", a.BasicRec.StopDate)
-	s += fmt.Sprintf("normal_vat_system_flag:%s\n", a.BasicRec.NormalVATSystemFlag)
+	s += fmt.Sprintf("afm:%s\n", a.Result.AFM)
+	s += fmt.Sprintf("doy:%s\n", a.Result.DOY)
+	s += fmt.Sprintf("doy_descr:%s\n", a.Result.DOYDescription)
+	s += fmt.Sprintf("i_ni_flag_descr:%s\n", a.Result.InitialFlagDescription)
+	s += fmt.Sprintf("deactivation_flag:%s\n", a.Result.DeactivationFlag)
+	s += fmt.Sprintf("deactivation_flag_desc:%s\n", a.Result.DeactivationFlagDescription)
+	s += fmt.Sprintf("firm_flag_descr:%s\n", a.Result.FirmFlagDescription)
+	s += fmt.Sprintf("onomasia:%s\n", a.Result.Onomasia)
+	s += fmt.Sprintf("commer_title:%s\n", a.Result.CommercialTitle)
+	s += fmt.Sprintf("legal_status_descr:%s\n", a.Result.LegalStatusDescription)
+	s += fmt.Sprintf("postal_address:%s\n", a.Result.PostalAddress)
+	s += fmt.Sprintf("postal_address_no:%s\n", a.Result.PostalAddressNo)
+	s += fmt.Sprintf("postal_zip_code:%s\n", a.Result.PostalZipCode)
+	s += fmt.Sprintf("postal_area_description:%s\n", a.Result.PostalAreaDescription)
+	s += fmt.Sprintf("regist_date:%s\n", a.Result.RegistrationDate)
+	s += fmt.Sprintf("stop_date:%s\n", a.Result.StopDate)
+	s += fmt.Sprintf("normal_vat_system_flag:%s\n", a.Result.NormalVATSystemFlag)
 
 	s += fmt.Sprintf("ACTIVITIES:--------------------\n")
-	for k, v := range a.BasicRec.Activities {
+	for k, v := range a.Activities {
 		s += fmt.Sprintf("ACTIVITY #%d\n", k)
-		s += fmt.Sprintf("FirmActCode: %s\n", v.FirmActCode)
-		s += fmt.Sprintf("FirmActDescr: %s\n", v.FirmActDescriptionn)
-		s += fmt.Sprintf("FirmActKind: %s\n", v.FirmActKind)
-		s += fmt.Sprintf("FirmActKindDescr: %s\n", v.FirmActKindDescr)
+		s += fmt.Sprintf("FirmActCode: %d\n", v.Code)
+		s += fmt.Sprintf("FirmActDescr: %s\n", v.Descriptionn)
+		s += fmt.Sprintf("FirmActKind: %d\n", v.Kind)
+		s += fmt.Sprintf("FirmActKindDescr: %s\n", v.KindDescr)
 	}
 
-	s += fmt.Sprintf("ErrorDescr: %s\n", a.Error.ErrorDescription)
-	s += fmt.Sprintf("ErrorCode: %s\n", a.Error.ErrorCode)
+	s += fmt.Sprintf("ErrorDescr: %s\n", a.Error.Message)
+	s += fmt.Sprintf("ErrorCode: %s\n", a.Error.Code)
 
 	return s
 }
