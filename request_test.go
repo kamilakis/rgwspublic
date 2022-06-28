@@ -113,7 +113,7 @@ func TestInvalids(t *testing.T) {
 
 	for k, v := range inputs {
 		t.Logf("testing input #%d, vat:%s, user:%s, pass:%s", k, v["vat"], v["username"], v["password"])
-		i, err := AFMInfo("", v["vat"], v["username"], v["password"])
+		i, err := GetVATInfo("", v["vat"], v["username"], v["password"])
 		if err != nil {
 			t.Errorf("error getting AFM info: %s", err.Error())
 			continue
@@ -131,7 +131,7 @@ func TestPublicInfo(t *testing.T) {
 	// VAT number of InfoQuest
 	// replace username and password with the ones you got from
 	// http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
-	i, err := AFMInfo("", "998184801", "username", "password")
+	i, err := GetVATInfo("", "998184801", "username", "password")
 	if err != nil {
 		t.Errorf("error getting AFM info: %s", err.Error())
 	}
