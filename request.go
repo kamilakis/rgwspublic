@@ -181,7 +181,6 @@ func parseAFMInfo(r *http.Response) (*ResultTypeData, error) {
 	// can't decide whether to change those horrific names or not
 	data := xmlr.Body.AFMMethodResponse.Result.ResultType
 	data.BasicRec.Activities = xmlr.Body.AFMMethodResponse.Result.ResultType.Activities.Activities
-	// data.Error = xmlr.Body.RGWSPublicAfmMethodResponse.PErrorRecOut
 
 	return &data, nil
 }
