@@ -3,6 +3,7 @@ package rgwspublic
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 )
 
 // XMLResponse is where we parse an http response
@@ -40,8 +41,8 @@ type ResultTypeData struct {
 	CallSeqID      string   `xml:"call_seq_id" json:"call_seq_id"`
 	AFMCalledByRec AFMCalledByRecData
 	BasicRec       BasicRecData
-	Activities     FirmActivityTabData
-	ErrorRec       ErrorRecData
+	Activities     FirmActivityTabData `json:"-"`
+	Error          ErrorRecData
 }
 
 type CallSeqIDData struct {
@@ -90,16 +91,16 @@ type BasicRecData struct {
 
 // FirmActivities is the activities of the entity
 type FirmActivityTabData struct {
-	XMLName    xml.Name `xml:"firm_act_tab" json:"-"`
-	Activities []FirmActivities
+	XMLName    xml.Name         `xml:"firm_act_tab" json:"-"`
+	Activities []FirmActivities `xml:"item" json:"-"`
 }
 
 type FirmActivities struct {
-	XMLName             xml.Name `xml:"item" json:"-"`
-	FirmActCode         string   `xml:"firm_act_code" json:"firm_act_code"`                   // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
-	FirmActDescriptionn string   `xml:"firm_act_descr" json:"firm_act_description"`           // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
-	FirmActKind         string   `xml:"firm_act_kind" json:"firm_activity_kind"`              // ΕΙΔΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: 1=ΚΥΡΙΑ, 2=ΔΕΥΤΕΡΕΥΟΥΣΑ, 3=ΛΟΙΠΗ, 4=ΒΟΗΘΗΤΙΚΗ
-	FirmActKindDescr    string   `xml:"firm_act_kind_descr" json:"firm_act_kind_description"` // ΠΕΡΙΓΡΑΦΗ ΕΙΔΟΥΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: ΚΥΡΙΑ, ΔΕΥΤΕΡΕΥΟΥΣΑ, ΛΟΙΠΗ, ΒΟΗΘΗΤΙΚΗ
+	// XMLName             xml.Name `xml:"item" json:"-"`
+	FirmActCode         string `xml:"firm_act_code" json:"firm_act_code"`                   // ΚΩΔΙΚΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+	FirmActDescriptionn string `xml:"firm_act_descr" json:"firm_act_description"`           // ΠΕΡΙΓΡΑΦΗ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ
+	FirmActKind         string `xml:"firm_act_kind" json:"firm_activity_kind"`              // ΕΙΔΟΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: 1=ΚΥΡΙΑ, 2=ΔΕΥΤΕΡΕΥΟΥΣΑ, 3=ΛΟΙΠΗ, 4=ΒΟΗΘΗΤΙΚΗ
+	FirmActKindDescr    string `xml:"firm_act_kind_descr" json:"firm_act_kind_description"` // ΠΕΡΙΓΡΑΦΗ ΕΙΔΟΥΣ ΔΡΑΣΤΗΡΙΟΤΗΤΑΣ: ΚΥΡΙΑ, ΔΕΥΤΕΡΕΥΟΥΣΑ, ΛΟΙΠΗ, ΒΟΗΘΗΤΙΚΗ
 }
 
 const (
@@ -127,7 +128,6 @@ const (
 )
 
 func (a *ResultTypeData) JSON() (string, error) {
-
 	var j []byte
 	j, err := json.MarshalIndent(&a, "", "\t")
 	if err != nil {
@@ -137,40 +137,39 @@ func (a *ResultTypeData) JSON() (string, error) {
 	return string(j), nil
 }
 
-func (a *ResultData) String() string {
-
+func (a *ResultTypeData) String() string {
 	var s string
 
-	// s = fmt.Sprintf("XMLName:%s\n", a.XMLName)
-	// s += fmt.Sprintf("AFM:%s\n", a.AFM)
-	// s += fmt.Sprintf("DOY:%s\n", a.DOY)
-	// s += fmt.Sprintf("DOYDesc:%s\n", a.DOYDesc)
-	// s += fmt.Sprintf("INiFlagDescr:%s\n", a.INiFlagDescr)
-	// s += fmt.Sprintf("DeactivationFlag:%s\n", a.DeactivationFlag)
-	// s += fmt.Sprintf("DeactivationFlagDescr:%s\n", a.DeactivationFlagDescr)
-	// s += fmt.Sprintf("FirmFlagDescr:%s\n", a.FirmFlagDescr)
-	// s += fmt.Sprintf("Onomasia:%s\n", a.Onomasia)
-	// s += fmt.Sprintf("CommerTitle:%s\n", a.CommerTitle)
-	// s += fmt.Sprintf("LegalStatusDescr:%s\n", a.LegalStatusDescr)
-	// s += fmt.Sprintf("PostalAddress:%s\n", a.PostalAddress)
-	// s += fmt.Sprintf("PostalAddressNo:%s\n", a.PostalAddressNo)
-	// s += fmt.Sprintf("PostalZipCode:%s\n", a.PostalZipCode)
-	// s += fmt.Sprintf("PostalAreaDescription:%s\n", a.PostalAreaDescription)
-	// s += fmt.Sprintf("RegistDate:%s\n", a.RegistDate)
-	// s += fmt.Sprintf("StopDate:%s\n", a.StopDate)
+	s = fmt.Sprintf("XMLName:%s\n", a.XMLName)
+	s += fmt.Sprintf("afm:%s\n", a.BasicRec.AFM)
+	s += fmt.Sprintf("doy:%s\n", a.BasicRec.DOY)
+	s += fmt.Sprintf("doy_descr:%s\n", a.BasicRec.DOYDescription)
+	s += fmt.Sprintf("i_ni_flag_descr:%s\n", a.BasicRec.InitialFlagDescription)
+	s += fmt.Sprintf("deactivation_flag:%s\n", a.BasicRec.DeactivationFlag)
+	s += fmt.Sprintf("deactivation_flag_desc:%s\n", a.BasicRec.DeactivationFlagDescription)
+	s += fmt.Sprintf("firm_flag_descr:%s\n", a.BasicRec.FirmFlagDescription)
+	s += fmt.Sprintf("onomasia:%s\n", a.BasicRec.Onomasia)
+	s += fmt.Sprintf("commer_title:%s\n", a.BasicRec.CommercialTitle)
+	s += fmt.Sprintf("legal_status_descr:%s\n", a.BasicRec.LegalStatusDescription)
+	s += fmt.Sprintf("postal_address:%s\n", a.BasicRec.PostalAddress)
+	s += fmt.Sprintf("postal_address_no:%s\n", a.BasicRec.PostalAddressNo)
+	s += fmt.Sprintf("postal_zip_code:%s\n", a.BasicRec.PostalZipCode)
+	s += fmt.Sprintf("postal_area_description:%s\n", a.BasicRec.PostalAreaDescription)
+	s += fmt.Sprintf("regist_date:%s\n", a.BasicRec.RegistrationDate)
+	s += fmt.Sprintf("stop_date:%s\n", a.BasicRec.StopDate)
+	s += fmt.Sprintf("normal_vat_system_flag:%s\n", a.BasicRec.NormalVATSystemFlag)
 
-	// s += fmt.Sprintf("ACTIVITIES:--------------------\n")
-	// for k, v := range a.Activities {
-	// 	s += fmt.Sprintf("ACTIVITY #%d\n", k)
-	// 	s += fmt.Sprintf("FirmActCode: %s\n", v.FirmActCode)
-	// 	s += fmt.Sprintf("FirmActDescr: %s\n", v.FirmActDescr)
-	// 	s += fmt.Sprintf("FirmActKind: %s\n", v.FirmActKind)
-	// 	s += fmt.Sprintf("FirmActKindDescr: %s\n", v.FirmActKindDescr)
-	// }
+	s += fmt.Sprintf("ACTIVITIES:--------------------\n")
+	for k, v := range a.BasicRec.Activities {
+		s += fmt.Sprintf("ACTIVITY #%d\n", k)
+		s += fmt.Sprintf("FirmActCode: %s\n", v.FirmActCode)
+		s += fmt.Sprintf("FirmActDescr: %s\n", v.FirmActDescriptionn)
+		s += fmt.Sprintf("FirmActKind: %s\n", v.FirmActKind)
+		s += fmt.Sprintf("FirmActKindDescr: %s\n", v.FirmActKindDescr)
+	}
 
-	// s += fmt.Sprintf("ErrorDescr: %s\n", a.Error.ErrorDescr)
-	// s += fmt.Sprintf("ErrorCode: %s\n", a.Error.ErrorCode)
+	s += fmt.Sprintf("ErrorDescr: %s\n", a.Error.ErrorDescription)
+	s += fmt.Sprintf("ErrorCode: %s\n", a.Error.ErrorCode)
 
 	return s
-
 }

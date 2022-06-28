@@ -13,7 +13,6 @@ import (
 // Version gets web service version
 // returns a string or an error
 func Version() (string, error) {
-
 	var version string
 
 	env := `<?xml version="1.0" encoding="UTF-8"?>
@@ -66,7 +65,6 @@ func Version() (string, error) {
 // accepts a called by VAT and a called for VAT, username and password
 // returns AFMData or an error
 func AFMInfo(calledby, calledfor, user, pass string) (*ResultTypeData, error) {
-
 	info := &ResultTypeData{}
 
 	// vat number must be between 9 and 12 chars
@@ -164,15 +162,11 @@ func parseVersion(r *http.Response) (string, error) {
 // helper function to get AFM data from an xml response
 // func parseAFMInfo(r *http.Response) (*ResultTypeData, error) {
 func parseAFMInfo(r *http.Response) (*ResultTypeData, error) {
-
 	// read response Body
 	rbody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Println("error reading response body:", err)
 	}
-
-	// print response body
-	// fmt.Println(string(rbody))
 
 	// create an empty struct to unmarshal xml into
 	xmlr := XMLResponse{}
@@ -218,7 +212,5 @@ func parseXMLError(r *http.Response) ErrorRecData {
 	}
 
 	// return the child element that contains the actual error
-	// return xmlr.Body.AFMMethodResponse.Result.ResultType.ErrorRec
-	test := ErrorRecData{}
-	return test
+	return xmlr.Body.AFMMethodResponse.Result.ResultType.Error
 }
