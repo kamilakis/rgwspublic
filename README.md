@@ -28,7 +28,7 @@ func main() {
 	// get VAT info using number of InfoQuest
 	// replace username and password with the ones you got from
 	// http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
-	i, err := rgwspublic.AFMInfo("", "998184801", username, password)
+	i, err := rgwspublic.GetVATInfo("998184801", "username", "password")
 	if err != nil {
 		fmt.Println(err)
 		return
