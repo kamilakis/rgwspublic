@@ -70,20 +70,11 @@ func Version() (*string, error) {
 // AFMInfo gets info associated with a VAT number
 // accepts a called by VAT and a called for VAT, username and password
 // returns AFMData or an error
-func GetVATInfo(calledby, calledfor, user, pass string) (*VATInfo, error) {
+func GetVATInfo(calledfor, user, pass string) (*VATInfo, error) {
 
 	// vat number must be between 9 and 12 chars
 	if len(calledfor) < 9 || len(calledfor) > 12 {
 		return nil, ErrInvalidVAT
-	}
-
-	// calledby can be an empty string
-	if calledby != "" {
-		// duplicate code from above
-		// vat number must be between 9 and 12 chars
-		if len(calledby) < 9 || len(calledby) > 12 {
-			return nil, ErrInvalidVAT
-		}
 	}
 
 	// same for username/password
@@ -108,12 +99,12 @@ func GetVATInfo(calledby, calledfor, user, pass string) (*VATInfo, error) {
 			<env:Body>
 	   			<ns2:rgWsPublic2AfmMethod>
 		  			<ns2:INPUT_REC>
-			 			<ns3:afm_called_by>%v</ns3:afm_called_by>
+						<ns3:afm_called_by/>
 			 			<ns3:afm_called_for>%v</ns3:afm_called_for>
 		  			</ns2:INPUT_REC>
 	   			</ns2:rgWsPublic2AfmMethod>
 			</env:Body>
- 		</env:Envelope>`, user, pass, calledby, calledfor)
+ 		</env:Envelope>`, user, pass, calledfor)
 
 	req, err := http.NewRequest("POST", Endpoint, strings.NewReader(body))
 	if err != nil {
@@ -147,7 +138,8 @@ func GetVATInfo(calledby, calledfor, user, pass string) (*VATInfo, error) {
 		return nil, err
 	}
 
-	xmlBody.VATInfo.Error = nil // to correct parser creating an object
+	// to correct parser creating an object
+	xmlBody.VATInfo.Error = nil
 	return &xmlBody.VATInfo, nil
 }
 
