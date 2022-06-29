@@ -1,8 +1,8 @@
 # rgwspublic
 client library for greek GSIS tax service in [Go](https://golang.org/)
 
-[![Build status](https://travis-ci.org/kamilakis/rgwspublic.svg?branch=master)](https://travis-ci.org/kamhlos/rgwspublic)
-[![GoDoc](https://godoc.org/github.com/kamilakis/rgwspublic?status.svg)](https://godoc.org/github.com/kamhlos/rgwspublic)
+[![Build status](https://travis-ci.org/instacar/rgwspublic.svg?branch=master)](https://travis-ci.org/instacar/rgwspublic)
+[![GoDoc](https://godoc.org/github.com/instacar/rgwspublic?status.svg)](https://godoc.org/github.com/instacar/rgwspublic)
 
 ## Example
 
@@ -12,7 +12,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/kamilakis/rgwspublic"
+	"github.com/instacar/rgwspublic"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	// get VAT info using number of InfoQuest
 	// replace username and password with the ones you got from
 	// http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
-	i, err := rgwspublic.AFMInfo("", "998184801", username, password)
+	i, err := rgwspublic.GetVATInfo("", "998184801", username, password)
 	if err != nil {
 		fmt.Println(err)
 		return

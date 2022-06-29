@@ -2,6 +2,7 @@ package rgwspublic
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -61,12 +62,12 @@ func TestJSON(t *testing.T) {
 		Header:        make(http.Header, 0),
 	}
 
-	i, err := parseAFMInfo(r)
+	i, err := parseXML(r)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println(i.JSON())
+	fmt.Println(json.Marshal(i))
 }
 
 func TestVersion(t *testing.T) {
@@ -77,7 +78,7 @@ func TestVersion(t *testing.T) {
 		t.Fail()
 	}
 
-	fmt.Printf("got version: %s\n", version)
+	fmt.Printf("got version: %s\n", *version)
 }
 
 func TestInvalids(t *testing.T) {
@@ -112,14 +113,14 @@ func TestInvalids(t *testing.T) {
 
 	for k, v := range inputs {
 		t.Logf("testing input #%d, vat:%s, user:%s, pass:%s", k, v["vat"], v["username"], v["password"])
-		i, err := AFMInfo("", v["vat"], v["username"], v["password"])
+		i, err := GetVATInfo("", v["vat"], v["username"], v["password"])
 		if err != nil {
 			t.Errorf("error getting AFM info: %s", err.Error())
 			continue
 		}
 
-		if i.Error.ErrorCode != v["error"] {
-			t.Errorf("error code returned not expected, got: %s, wanted: %s", i.Error.ErrorCode, v["error"])
+		if i.Error.Code != v["error"] {
+			t.Errorf("error code returned not expected, got: %s, wanted: %s", i.Error.Code, v["error"])
 		}
 	}
 
@@ -130,7 +131,7 @@ func TestPublicInfo(t *testing.T) {
 	// VAT number of InfoQuest
 	// replace username and password with the ones you got from
 	// http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
-	i, err := AFMInfo("", "998184801", "username", "password")
+	i, err := GetVATInfo("", "998184801", "username", "password")
 	if err != nil {
 		t.Errorf("error getting AFM info: %s", err.Error())
 	}
@@ -191,12 +192,12 @@ func TestParseAFMInfo(t *testing.T) {
 		Header:        make(http.Header, 0),
 	}
 
-	i, err := parseAFMInfo(r)
+	i, err := parseXML(r)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println(i.String())
+	fmt.Println(i.VATInfo.String())
 }
 
 func TestParseVersion(t *testing.T) {
@@ -222,7 +223,7 @@ func TestParseVersion(t *testing.T) {
 		Header:        make(http.Header, 0),
 	}
 
-	v, err := parseVersion(r)
+	v, err := parseXML(r)
 	if err != nil {
 		fmt.Println(err)
 	}
