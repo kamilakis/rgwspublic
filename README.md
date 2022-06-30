@@ -25,10 +25,10 @@ func main() {
 
 	fmt.Println(v)
 
-	// get VAT info using number of InfoQuest
+	// get info using VAT number of a public service
 	// replace username and password with the ones you got from
-	// http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
-	i, err := rgwspublic.GetVATInfo("998184801", "username", "password")
+	// https://www1.aade.gr/sgsisapps/tokenservices/protected/displayConsole.htm
+	i, err := rgwspublic.GetVATInfo("", "090165560", "username", "password")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -38,36 +38,24 @@ func main() {
 }
 
 ```
-Note that username and password is supplied from the [service](http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html).
+Note that username and password is supplied from the [service](https://www1.aade.gr/sgsisapps/tokenservices/protected/displayConsole.htm).
 
 `go get -v`
 
 `go run main.go`
 
-Two methods are exposed, `AFMInfo(string, string, string, string)` and `Version()`:
-AFMInfo() accepts two vat numbers (strings), and service credentials (username, password).
+Two methods are exposed, `GetVatInfo(string, string, string)` and `Version()`:
+GetVatInfo() accepts two vat numbers (strings), and service credentials (username, password).
 
 First VAT number is the callee, second is the one we want information for. The callee can be empty.
 
 
 
+### Βήμα - βήμα
 
-## Πληροφορίες για την Υπηρεσία
-### Πρόγραμμα Πελάτης (Client)της Διαδικτυακής Εφαρμογής των ΓΓΔΕ/ΓΓΠΣ:
-
-«Βασικά στοιχεία για νομικά πρόσωπα, νομικές οντότητες και φυσικά πρόσωπα, με εισόδημα από επιχειρηματική δραστηριότητα(public)», [Έκδοση 3.0.3:](http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html)
-
-
-Αναλυτικές οδηγίες χρήσης της διαδικτυακής υπηρεσίας υπάρχουν [εδώ:](http://http://www.gsis.gr/gsis/info/gsis_site/News/documents_news/RgWsPublic_documentation_v3.0.1.rar)
-
-
-### Υπηρεσία αναζήτησης πληροφοριών για ΑΦΜ:
-
-http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
-
-Από τις 06/05/2014, η Γ.Γ.Π.Σ., σε συνεργασία με την Γ.Γ.Δ.Ε., ανακοίνωσαν τη λειτουργία της διαδικτυακής υπηρεσίας «Βασικά στοιχεία για νομικά πρόσωπα, νομικές οντότητες και φυσικά πρόσωπατυ με εισόδημα από επιχειρηματική δραστηριότητα(public)».
-
-Η υπηρεσία επανασχεδίαστηκε όπως αναφέρεται στην ανακοίνωσή της ΓΓΠΣ στις 6/5/2014.
+1. [x] Εγγραφή στην [υπηρεσία](https://www1.aade.gr/webtax/wspublicreg/faces/pages/wspublicreg/menu.xhtml) κάνοντας χρήση των κωδικών TAXISnet.
+2. [x] Απόκτηση ειδικών κωδικών πρόσβασης μέσω της εφαρμογής [Διαχείριση Ειδικών Κωδικών](https://www1.aade.gr/sgsisapps/tokenservices/protected/displayConsole.htm).
+3. [x] Χρήση ένος προγράμματος της αρεσκείας σας για την [κλήση της υπηρεσίας](https://www.aade.gr/sites/default/files/2018-07/AadeWebServiceRgWsPublicV401Client.zip).
 
 
 ### Τα βασικά χαρακτηριστικά της υπηρεσίας είναι:
@@ -77,14 +65,18 @@ http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
 * Ο ΑΦΜ τα στοιχεία του οποίου αναζητούνται, ενημερώνεται με ειδική ειδοποίηση, για το ΑΦΜ / ονοματεπώνυμο που έκανε την αναζήτηση.
 * Μέσω της οθόνης εγγραφής στην υπηρεσία μπορεί κάποιος να εξουσιοδοτήσει ένα τρίτο ΑΦΜ να καλεί την υπηρεσία γι’ αυτόν.
 
+**Τα WSDL / ENDPOINT / XSD της αναβαθμισμένης υπηρεσίας είναι:**
 
-### Για την χρήση της υπηρεσίας θα πρέπει ο χρήστης:
+* WSDL		: https://www1.gsis.gr/wsaade/RgWsPublic2/RgWsPublic2?WSDL 
+* ENDPOINT	: https://www1.gsis.gr/wsaade/RgWsPublic2/RgWsPublic2 
+* XSD			: https://www1.gsis.gr/wsaade/RgWsPublic2/RgWsPublic2?xsd=1 
 
+Πρόκειται για Soap JAX-WS 2.0 Web Service (έκδοσης SOAP 1.2).
 
-1. Να εγγραφεί στην υπηρεσία κάνοντας χρήση των TAXISnet κωδικών του.
-2. Να αποδεχτεί την πολιτική ορθής χρήσης της υπηρεσίας.
-3. Να αποκτήσει ειδικούς κωδικούς πρόσβασης στην υπηρεσία μέσω της εφαρμογής «Διαχείριση Ειδικών Κωδικών».
-    * Τα Φυσικά Πρόσωπα μπορούν να δημιουργήσουν οι ίδιοι ειδικούς κωδικούς πρόσβασης.
-    * Για τα Νομικά Πρόσωπα μόνο οι νόμιμοι εκπρόσωποί τους (όπως έχουν ορισθεί στο TAXISnet) μπορούν να αποκτήσουν γι’ αυτά ειδικούς κωδικούς πρόσβασης. Εναλλακτικά, μπορούν να χρησιμοποιήσουν το μηχανισμό των εξουσιοδοτήσεων μέσω της οθόνης εγγραφής στην υπηρεσία.
+Για να καλέσει ένας σταθμός εργασίας την υπηρεσία απαιτείται δικτυακή πρόσβαση στο www1.gsis.gr και στο port 443. 
 
-4. Να χρησιμοποιήσει ένα «πρόγραμμα πελάτη (client)» της αρεσκείας του για την κλήση της υπηρεσίας.
+Εφόσον γίνει χρήση Java, απαιτείται χρήση Java 1.8 ή μεταγενέστερη λόγω της χρήσης του πρωτοκόλλου επικοινωνίας TLS1.2.
+
+Περιλαμβάνονται:
+a) παραδείγματα κλήσης (Request XML / Response XML) του Web Service, 
+b) ένα SoapUI project για να γίνει import στο SoapUI. Προτείνεται χρήση SoapUI Version 5.4.0 ή μεταγενέστερη λόγω της Java 1.8 ( https://www.soapui.org/downloads/latest-release.html ).

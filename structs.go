@@ -59,7 +59,7 @@ func (b *VATInfo) error() error {
 	return errors.New(b.Error.Message)
 }
 
-// ErrorInfo holds error info
+// ErrorVATInfo holds error info
 type ErrorVATInfo struct {
 	Code    string `xml:"error_code" json:"code"`
 	Message string `xml:"error_descr" json:"message"`
@@ -157,8 +157,9 @@ func (a *VATInfo) String() string {
 		s += fmt.Sprintf("FirmActKindDescr: %s\n", v.KindDescr)
 	}
 
-	s += fmt.Sprintf("ErrorDescr: %s\n", a.Error.Message)
-	s += fmt.Sprintf("ErrorCode: %s\n", a.Error.Code)
+	//s += fmt.Sprintf("ErrorDescr: %s\n", a.Error.Message)
+	//s += fmt.Sprintf("ErrorCode: %s\n", a.Error.Code)
+	s += fmt.Sprintf("Error: %v", a.Error)
 
 	return s
 }

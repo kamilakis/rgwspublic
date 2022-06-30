@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 )
 
@@ -111,9 +112,10 @@ func TestInvalids(t *testing.T) {
 		// },
 	}
 
+	// TODO: MATCH TEST ERRORS
 	for k, v := range inputs {
 		t.Logf("testing input #%d, vat:%s, user:%s, pass:%s", k, v["vat"], v["username"], v["password"])
-		i, err := GetVATInfo(v["vat"], v["username"], v["password"])
+		i, err := GetVATInfo("", v["vat"], v["username"], v["password"])
 		if err != nil {
 			t.Errorf("error getting AFM info: %s", err.Error())
 			continue
@@ -126,20 +128,28 @@ func TestInvalids(t *testing.T) {
 
 }
 
-func TestPublicInfo(t *testing.T) {
+func TestGetVatInfo(t *testing.T) {
+	user := os.Getenv("GSISUsername")
+	pass := os.Getenv("GSISPassword")
+	demo := os.Getenv("GSISVatDemo")
 
-	// VAT number of InfoQuest
+	// demo VAT number
 	// replace username and password with the ones you got from
-	// http://www.gsis.gr/gsis/info/gsis_site/PublicIssue/wnsp/wnsp_pages/wnsp.html
-	i, err := GetVATInfo("998184801", "username", "password")
+	// https://www1.aade.gr/sgsisapps/tokenservices/protected/displayConsole.htm
+	i, err := GetVATInfo("", demo, user, pass)
 	if err != nil {
-		t.Errorf("error getting AFM info: %s", err.Error())
+		t.Fatalf("error getting VAT info: %s", err.Error())
 	}
 
 	fmt.Println(i.String())
+	js, err := json.Marshal(i)
+	if err != nil {
+		t.Fatalf("error marshaling json: %s", err)
+	}
+	t.Logf("json: %s", string(js))
 }
 
-func TestParseAFMInfo(t *testing.T) {
+func TestParseVatInfo(t *testing.T) {
 
 	// a mock http response
 	body := fmt.Sprintf(`<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
