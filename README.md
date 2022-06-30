@@ -44,10 +44,12 @@ Note that username and password is supplied from the [service](https://www1.aade
 
 `go run main.go`
 
-Two methods are exposed, `GetVatInfo(string, string, string, string)` and `Version()`:
+Two functions are available, `GetVatInfo(string, string, string, string)`:
 GetVatInfo() accepts two vat numbers (strings), and service credentials (username, password).
-
 First VAT number is the callee, second is the one we want information for. The callee can be empty.
+
+and `Version()`:
+which returns the service's current version.
 
 
 
